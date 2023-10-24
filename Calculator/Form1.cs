@@ -127,7 +127,8 @@ namespace Calculator
         private void Eaqual(object sender, EventArgs e)
         {
             StringAnalyze analyze = new StringAnalyze(textBox1.Text);
-            textBox1.Text = analyze.GetResult(); 
+            CheckParenthesis(textBox1.Text);
+            textBox1.Text = analyze.GetResult();
         }
 
         private bool CheckNextSymbol(string value)
@@ -157,6 +158,26 @@ namespace Calculator
             }
 
             return new string(symbols.ToArray());
+        }
+
+        private void CheckParenthesis(string value)
+        {
+            var charValue = value.ToCharArray();
+            List<char> symbols = new List<char>();
+            symbols.AddRange(charValue);
+
+            for(int i = 0; i < symbols.Count; i++)
+            {
+                if (symbols[i] == '(' && symbols[i] != ')' || symbols[i] == ')' && symbols[i] != '(')
+                {
+                    throw new Exception("ошибка");
+                }
+            }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            textBox1.ReadOnly = true;
         }
     }
 }
