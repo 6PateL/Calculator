@@ -8,107 +8,123 @@ namespace Calculator
 {
     public class StringAnalyze
     {
-        private string _expression; 
+        private string _expression;
 
-        public StringAnalyze(string expression) 
-        { 
-            _expression = expression;   
+        public StringAnalyze(string expression)
+        {
+            _expression = expression;
         }
 
         public StringAnalyze()
         {
-            
+
         }
 
         public void SetExpression(string expression)
         {
-            _expression = expression; 
+            _expression = expression;
         }
 
         public string GetResult()
         {
             string postfix = ConvertToPostfix(_expression);
             int result = EvaluatePostfix(postfix);
-            return result.ToString(); 
+            return result.ToString();
         }
 
-        private string ConvertToPostfix(string expression)
+        static string ConvertToPostfix(string expression)
         {
-            var output = new List<char>();
+            var output = new List<string>();
             var stack = new Stack<char>();
+            var number = "";
 
             foreach (var c in expression)
             {
                 if (char.IsDigit(c))
                 {
-                    output.Add(c);
-                }
-                else if (c == '(')
-                {
-                    stack.Push(c);
-                }
-                else if (c == ')')
-                {
-                    while (stack.Count > 0 && stack.Peek() != '(')
-                    {
-                        output.Add(stack.Pop());
-                    }
-
-                    if (stack.Count > 0 && stack.Peek() == '(')
-                    {
-                        stack.Pop();
-                    }
+                    number += c;
                 }
                 else
                 {
-                    while (stack.Count > 0 && GetPrecedence(c) <= GetPrecedence(stack.Peek()))
+                    if (!string.IsNullOrEmpty(number))
                     {
-                        output.Add(stack.Pop());
+                        output.Add(number);
+                        number = "";
                     }
 
-                    stack.Push(c);
+                    if (c == '(')
+                    {
+                        stack.Push(c);
+                    }
+                    else if (c == ')')
+                    {
+                        while (stack.Count > 0 && stack.Peek() != '(')
+                        {
+                            output.Add(stack.Pop().ToString());
+                        }
+
+                        if (stack.Count > 0 && stack.Peek() == '(')
+                        {
+                            stack.Pop();
+                        }
+                    }
+                    else if (c == '+' || c == '-' || c == '*' || c == '/')
+                    {
+                        while (stack.Count > 0 && GetPrecedence(c) <= GetPrecedence(stack.Peek()))
+                        {
+                            output.Add(stack.Pop().ToString());
+                        }
+
+                        stack.Push(c);
+                    }
                 }
+            }
+
+            if (!string.IsNullOrEmpty(number))
+            {
+                output.Add(number);
             }
 
             while (stack.Count > 0)
             {
-                output.Add(stack.Pop());
+                output.Add(stack.Pop().ToString());
             }
 
-            return new string(output.ToArray());
+            return string.Join(" ", output);
         }
 
-        private int EvaluatePostfix(string postfix)
+        static int EvaluatePostfix(string postfix)
         {
             var stack = new Stack<int>();
+            var tokens = postfix.Split(' ');
 
-            foreach (var c in postfix)
+            foreach (var token in tokens)
             {
-                if (char.IsDigit(c))
+                if (int.TryParse(token, out int number))
                 {
-                    stack.Push(c - '0');
+                    stack.Push(number);
                 }
                 else
                 {
                     int operand2 = stack.Pop();
                     int operand1 = stack.Pop();
 
-                    switch (c)
+                    switch (token)
                     {
-                        case '+':
+                        case "+":
                             stack.Push(operand1 + operand2);
                             break;
-                        case '-':
+                        case "-":
                             stack.Push(operand1 - operand2);
                             break;
-                        case '*':
+                        case "*":
                             stack.Push(operand1 * operand2);
                             break;
-                        case '/':
+                        case "/":
                             stack.Push(operand1 / operand2);
                             break;
                         default:
-                            throw new ArgumentException($"Invalid operator: {c}");
+                            throw new ArgumentException($"Invalid operator: {token}");
                     }
                 }
             }
@@ -116,7 +132,7 @@ namespace Calculator
             return stack.Pop();
         }
 
-        private int GetPrecedence(char op)
+        static int GetPrecedence(char op)
         {
             switch (op)
             {
@@ -130,5 +146,6 @@ namespace Calculator
                     return 0;
             }
         }
+
     }
 }
