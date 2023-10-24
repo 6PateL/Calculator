@@ -83,7 +83,7 @@ namespace Calculator
 
             if (CheckNextSymbol(textBox1.Text) == true)
             {
-                textBox1.Text = RemoveNextSymbol(textBox1.Text);
+                textBox1.Text = RemoveDuplicate(textBox1.Text);
             }
         }
 
@@ -93,7 +93,7 @@ namespace Calculator
 
             if (CheckNextSymbol(textBox1.Text) == true)
             {
-                textBox1.Text = RemoveNextSymbol(textBox1.Text);    
+                textBox1.Text = RemoveDuplicate(textBox1.Text);    
             }
         }
 
@@ -103,7 +103,7 @@ namespace Calculator
 
             if (CheckNextSymbol(textBox1.Text) == true)
             {
-                textBox1.Text = RemoveNextSymbol(textBox1.Text);
+                textBox1.Text = RemoveDuplicate(textBox1.Text);
             }
         }
 
@@ -113,7 +113,7 @@ namespace Calculator
 
             if (CheckNextSymbol(textBox1.Text) == true)
             {
-                textBox1.Text = RemoveNextSymbol(textBox1.Text);
+                textBox1.Text = RemoveDuplicate(textBox1.Text);
             }
         }
         #endregion
@@ -142,7 +142,7 @@ namespace Calculator
             return false; 
         }
 
-        private static string RemoveNextSymbol(string value)
+        private static string RemoveDuplicate(string value)
         {
             var charValue = value.ToString();
             List<char> symbols = new List<char>();
